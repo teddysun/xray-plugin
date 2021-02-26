@@ -1,4 +1,4 @@
-## Yet another SIP003 plugin for shadowsocks, based on Xray-core
+## Yet another SIP003 plugin for shadowsocks, based on [Xray-core](https://github.com/xtls/xray-core)
 
 ## Build
 
@@ -52,7 +52,7 @@ ss-local -c config.json -p 443 --plugin xray-plugin --plugin-opts "mode=quic;hos
 
 ### Issue a cert for TLS and QUIC
 
-xray-plugin will look for TLS certificates signed by [acme.sh](https://github.com/acmesh-official/acme.sh) by default.
+`xray-plugin` will look for TLS certificates signed by [acme.sh](https://github.com/acmesh-official/acme.sh) by default.
 Here's some sample commands for issuing a certificate using CloudFlare.
 You can find commands for issuing certificates for other DNS providers at acme.sh.
 
