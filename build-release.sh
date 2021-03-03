@@ -16,7 +16,7 @@ if [[ $upx == "echo pending" ]] && hash upx 2>/dev/null; then
 fi
 
 VERSION=$(git describe --tags)
-LDFLAGS="-X main.VERSION=$VERSION -s -w"
+LDFLAGS="-X main.VERSION=$VERSION -s -w -buildid="
 
 OSES=(linux darwin windows freebsd)
 ARCHS=(amd64 386)
@@ -55,6 +55,12 @@ env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -v -trimpath -ldflags "$LDFLA
 $upx xray-plugin_linux_arm64 >/dev/null
 tar -zcf bin/xray-plugin-linux-arm64-$VERSION.tar.gz xray-plugin_linux_arm64
 $sum bin/xray-plugin-linux-arm64-$VERSION.tar.gz
+
+# Darwin ARM64
+env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -v -trimpath -ldflags "$LDFLAGS" -o xray-plugin_darwin_arm64
+$upx xray-plugin_darwin_arm64 >/dev/null
+tar -zcf bin/xray-plugin-darwin-arm64-$VERSION.tar.gz xray-plugin_darwin_arm64
+$sum bin/xray-plugin-darwin-arm64-$VERSION.tar.gz
 
 # MIPS
 MIPSS=(mips mipsle)
