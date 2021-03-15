@@ -159,7 +159,7 @@ func generateConfig() (*core.Config, error) {
 		}},
 	}
 	if *fastOpen {
-		streamConfig.SocketSettings = &internet.SocketConfig{Tfo: internet.SocketConfig_Enable}
+		streamConfig.SocketSettings = &internet.SocketConfig{Tfo: 256}
 	}
 	if *tlsEnabled {
 		tlsConfig := tls.Config{ServerName: *host}
