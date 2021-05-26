@@ -30,6 +30,7 @@ import (
 	"github.com/xtls/xray-core/proxy/freedom"
 
 	"github.com/xtls/xray-core/transport/internet"
+	"github.com/xtls/xray-core/transport/internet/grpc"
 	"github.com/xtls/xray-core/transport/internet/quic"
 	"github.com/xtls/xray-core/transport/internet/tls"
 	"github.com/xtls/xray-core/transport/internet/websocket"
@@ -45,24 +46,25 @@ var (
 )
 
 var (
-	vpn        = flag.Bool("V", false, "Run in VPN mode.")
-	fastOpen   = flag.Bool("fast-open", false, "Enable TCP fast open.")
-	localAddr  = flag.String("localAddr", "127.0.0.1", "local address to listen on.")
-	localPort  = flag.String("localPort", "1984", "local port to listen on.")
-	remoteAddr = flag.String("remoteAddr", "127.0.0.1", "remote address to forward.")
-	remotePort = flag.String("remotePort", "1080", "remote port to forward.")
-	path       = flag.String("path", "/", "URL path for websocket.")
-	host       = flag.String("host", "cloudflare.com", "Hostname for server.")
-	tlsEnabled = flag.Bool("tls", false, "Enable TLS.")
-	cert       = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
-	certRaw    = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
-	key        = flag.String("key", "", "(server) Path to TLS key file. Default: ~/.acme.sh/{host}/{host}.key")
-	mode       = flag.String("mode", "websocket", "Transport mode: websocket, quic (enforced tls).")
-	mux        = flag.Int("mux", 1, "Concurrent multiplexed connections (websocket client mode only).")
-	server     = flag.Bool("server", false, "Run in server mode")
-	logLevel   = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
-	version    = flag.Bool("version", false, "Show current version of xray-plugin")
-	fwmark     = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
+	vpn         = flag.Bool("V", false, "Run in VPN mode.")
+	fastOpen    = flag.Bool("fast-open", false, "Enable TCP fast open.")
+	localAddr   = flag.String("localAddr", "127.0.0.1", "local address to listen on.")
+	localPort   = flag.String("localPort", "1984", "local port to listen on.")
+	remoteAddr  = flag.String("remoteAddr", "127.0.0.1", "remote address to forward.")
+	remotePort  = flag.String("remotePort", "1080", "remote port to forward.")
+	path        = flag.String("path", "/", "URL path for websocket.")
+	serviceName = flag.String("serviceName", "GunService", "Service name for grpc.")
+	host        = flag.String("host", "cloudflare.com", "Hostname for server.")
+	tlsEnabled  = flag.Bool("tls", false, "Enable TLS.")
+	cert        = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
+	certRaw     = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
+	key         = flag.String("key", "", "(server) Path to TLS key file. Default: ~/.acme.sh/{host}/{host}.key")
+	mode        = flag.String("mode", "websocket", "Transport mode: websocket, quic (enforced tls), grpc.")
+	mux         = flag.Int("mux", 1, "Concurrent multiplexed connections (websocket client mode only).")
+	server      = flag.Bool("server", false, "Run in server mode")
+	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
+	version     = flag.Bool("version", false, "Show current version of xray-plugin")
+	fwmark      = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
 )
 
 func homeDir() string {
@@ -148,6 +150,10 @@ func generateConfig() (*core.Config, error) {
 			Security: &protocol.SecurityConfig{Type: protocol.SecurityType_NONE},
 		}
 		*tlsEnabled = true
+	case "grpc":
+		transportSettings = &grpc.Config{
+			ServiceName: *serviceName,
+		}
 	default:
 		return nil, newError("unsupported mode:", *mode)
 	}
