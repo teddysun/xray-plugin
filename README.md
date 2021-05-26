@@ -64,6 +64,20 @@ On your client
 ss-local -c config.json -p 443 --plugin xray-plugin --plugin-opts "mode=grpc"
 ```
 
+### Shadowsocks over gRPC with TLS
+
+On your server
+
+```sh
+ss-server -c config.json -p 443 --plugin xray-plugin --plugin-opts "server;mode=grpc;tls;host=mydomain.com"
+```
+
+On your client
+
+```sh
+ss-local -c config.json -p 443 --plugin xray-plugin --plugin-opts "tls;mode=grpc;host=mydomain.com"
+```
+
 ### Issue a cert for TLS and QUIC
 
 `xray-plugin` will look for TLS certificates signed by [acme.sh](https://github.com/acmesh-official/acme.sh) by default.
