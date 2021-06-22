@@ -296,6 +296,9 @@ func startXRay() (core.Server, error) {
 		if c, b := opts.Get("path"); b {
 			*path = c
 		}
+		if c, b := opts.Get("serviceName"); b {
+			*serviceName = c
+		}
 		if c, b := opts.Get("cert"); b {
 			*cert = c
 		}
