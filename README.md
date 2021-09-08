@@ -50,7 +50,7 @@ On your client
 ss-local -c config.json -p 443 --plugin xray-plugin --plugin-opts "mode=quic;host=mydomain.com"
 ```
 
-### Shadowsocks over gRPC (Remote Procedure Call)
+### Shadowsocks over gRPC
 
 On your server
 
