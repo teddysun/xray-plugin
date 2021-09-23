@@ -194,8 +194,8 @@ github.com/viant/assertly v0.4.8/go.mod h1:aGifi++jvCrUaklKEKT0BU95igDNaqkvz+49u
 github.com/viant/toolbox v0.24.0/go.mod h1:OxMCG57V0PXuIP2HNQrtJf2CjqdmbrOx5EkMILuUhzM=
 github.com/xtls/go v0.0.0-20210920065950-d4af136d3672 h1:4mkzGhKqt3JO1BWYjtD3iRFyAx4ow67hmSqOcGjuxqQ=
 github.com/xtls/go v0.0.0-20210920065950-d4af136d3672/go.mod h1:YGGVbz9cOxyKFUmhW7LGaLZaMA0cPlHJinvAmVxEMSU=
-github.com/xtls/xray-core v1.4.4 h1:FpYfhNOwSHoszeVanjPOI0rZQieh8oX54tU2NuBq7Ts=
-github.com/xtls/xray-core v1.4.4/go.mod h1:X20xgLe2QaIQkpK5Vm5fg7c1URypXXjCt9k/XYt+8iQ=
+github.com/xtls/xray-core v1.4.5 h1:1XC1Bpu/cZSfSb0NAbXQwBLuSn0osx6nI3ukZMScICg=
+github.com/xtls/xray-core v1.4.5/go.mod h1:X20xgLe2QaIQkpK5Vm5fg7c1URypXXjCt9k/XYt+8iQ=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/yuin/goldmark v1.4.0/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
