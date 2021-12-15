@@ -229,7 +229,9 @@ func generateConfig() (*core.Config, error) {
 		for i := 0; i < len(localAddrs); i++ {
 			inbounds[i] = &core.InboundHandlerConfig{
 				ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{
-					PortRange:      net.SinglePortRange(lport),
+					PortList:       &net.PortList{
+						Range: []*net.PortRange{net.SinglePortRange(lport)},
+					},
 					Listen:         net.NewIPOrDomain(net.ParseAddress(localAddrs[i])),
 					StreamSettings: &streamConfig,
 				}),
@@ -255,7 +257,9 @@ func generateConfig() (*core.Config, error) {
 		return &core.Config{
 			Inbound: []*core.InboundHandlerConfig{{
 				ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{
-					PortRange: net.SinglePortRange(lport),
+					PortList:  &net.PortList{
+						Range: []*net.PortRange{net.SinglePortRange(lport)},
+					},
 					Listen:    net.NewIPOrDomain(net.ParseAddress(*localAddr)),
 				}),
 				ProxySettings: serial.ToTypedMessage(&dokodemo.Config{
