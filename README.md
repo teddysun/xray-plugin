@@ -22,7 +22,7 @@ On your client
 ss-local -c config.json -p 80 --plugin xray-plugin
 ```
 
-### Shadowsocks over websocket (HTTPS)
+### Shadowsocks over websocket with TLS (HTTPS)
 
 On your server
 
@@ -36,7 +36,7 @@ On your client
 ss-local -c config.json -p 443 --plugin xray-plugin --plugin-opts "tls;host=mydomain.com"
 ```
 
-### Shadowsocks over quic
+### Shadowsocks over QUIC
 
 On your server
 
