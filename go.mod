@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/golang/protobuf v1.5.2
-	github.com/xtls/xray-core v1.6.2
+	github.com/xtls/xray-core v1.6.3
 )
 
 require (
@@ -12,7 +12,7 @@ require (
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
-	github.com/google/pprof v0.0.0-20221010195024-131d412537ea // indirect
+	github.com/google/pprof v0.0.0-20221103000818-d260c55eee4c // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/lucas-clemente/quic-go v0.30.0 // indirect
@@ -24,7 +24,7 @@ require (
 	github.com/sagernet/sing v0.0.0-20220801112236-1bb95f9661fc // indirect
 	github.com/xtls/go v0.0.0-20220914232946-0441cf4cf837 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
-	golang.org/x/exp v0.0.0-20221028150844-83b7d23a625f // indirect
+	golang.org/x/exp v0.0.0-20221106115401-f9659909a136 // indirect
 	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
