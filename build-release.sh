@@ -103,3 +103,9 @@ env CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -v -trimpath -ldflags "$LDFLA
 $upx xray-plugin_linux_s390x >/dev/null
 tar -zcf bin/xray-plugin-linux-s390x-$VERSION.tar.gz xray-plugin_linux_s390x
 $sum bin/xray-plugin-linux-s390x-$VERSION.tar.gz
+
+# riscv64
+env CGO_ENABLED=0 GOOS=linux GOARCH=riscv64 go build -v -trimpath -ldflags "$LDFLAGS" -o xray-plugin_linux_riscv64
+$upx xray-plugin_linux_riscv64 >/dev/null
+tar -zcf bin/xray-plugin-linux-riscv64-$VERSION.tar.gz xray-plugin_linux_riscv64
+$sum bin/xray-plugin-linux-riscv64-$VERSION.tar.gz
