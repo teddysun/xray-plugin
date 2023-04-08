@@ -140,7 +140,6 @@ func generateConfig() (*core.Config, error) {
 			Path: *path,
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
-			Header: append([]*websocket.Header{
 				{Key: "Sec-WebSocket-Protocol", Value: "2048"},
 			}),
 		}
