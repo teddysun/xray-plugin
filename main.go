@@ -140,6 +140,8 @@ func generateConfig() (*core.Config, error) {
 			Path: *path,
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
+			Header: append([]*websocket.Header{
+				{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(2048)},
 			}),
 		}
 		if *mux != 0 {
