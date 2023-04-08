@@ -138,9 +138,9 @@ func generateConfig() (*core.Config, error) {
 	case "websocket":
 		transportSettings = &websocket.Config{
 			Path: *path,
-			Header: []*websocket.Header{
+			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
-			},
+			}),
 		}
 		if *mux != 0 {
 			connectionReuse = true
