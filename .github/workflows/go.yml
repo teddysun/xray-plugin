@@ -5,9 +5,9 @@ name: Go
 
 on:
   push:
-    branches: [ "fix-0-RTT-header-string" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "fix-0-RTT-header-string" ]
+    branches: [ "main" ]
 
 jobs:
 
