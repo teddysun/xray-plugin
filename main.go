@@ -65,7 +65,7 @@ var (
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
 	version     = flag.Bool("version", false, "Show current version of xray-plugin")
 	fwmark      = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
-	ed          = flag.Int("ed", 1, "Websocket 0-RTT")
+	ed          = flag.Int("ed", 2048, "Websocket 0-RTT")
 )
 
 func homeDir() string {
@@ -142,10 +142,9 @@ func generateConfig() (*core.Config, error) {
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
 			}),
-		}
 		if *ed !=0 {
 			Header: append([]*websocket.Header{
-				{Key: "Sec-WebSocket-Protocol", Value: *host},
+				{Key: "Sec-WebSocket-Protocol", Value: *ed},
 			}),
 		}
 		if *mux != 0 {
