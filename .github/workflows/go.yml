@@ -24,7 +24,7 @@ jobs:
     - name: Build
       run: go build
 
-      - name: Archive production artifacts
+    - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist-without-markdown
