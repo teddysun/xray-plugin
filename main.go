@@ -66,7 +66,7 @@ var (
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
 	version     = flag.Bool("version", false, "Show current version of xray-plugin")
 	fwmark      = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
-	ed          = flag.Int("ed", 0, "Websocket 0-RTT")
+	ed          = flag.String("ed", "0", "Websocket 0-RTT")
 )
 
 func homeDir() string {
