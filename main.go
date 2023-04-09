@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"encoding/base64"
 
 	"github.com/golang/protobuf/proto"
 
@@ -144,11 +145,9 @@ func generateConfig() (*core.Config, error) {
 			}),
 		}
 		if *ed !=0 {
-			transportSettings = &websocket.Config{
-				Header: append([]*websocket.Header{
-					{Key: "Sec-WebSocket-Protocol", Value: *ed},
-				}),
-			}
+		header := wsSettings.GetRequestHeader()
+			header.Set("Sec-WebSocket-Protocol", base64.RawURLEncoding.EncodeToString(ed))
+	}
 		}
 		if *mux != 0 {
 			connectionReuse = true
