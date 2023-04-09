@@ -149,7 +149,7 @@ func generateConfig() (*core.Config, error) {
 			Ed = uint32(ed)
 			transportSettings = &websocket.Config{
 				Header: append([]*websocket.Header{
-					{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(Ed)},
+					{Key: "Sec-WebSocket-Protocol", Value: uint32(*ed)},
 				}),
 			}
 		}
