@@ -145,7 +145,6 @@ func generateConfig() (*core.Config, error) {
 			}),
 		}
 		if *ed !=0 {
-			ed, _ := strconv.Atoi(q.Get("ed"))
 			ed = uint32(ed)
 			transportSettings = &websocket.Config{
 				Header: append([]*websocket.Header{
