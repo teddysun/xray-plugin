@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"encoding/base64"
 
 	"github.com/golang/protobuf/proto"
 
