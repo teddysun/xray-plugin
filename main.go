@@ -145,7 +145,7 @@ func generateConfig() (*core.Config, error) {
 			}),
 		}
 		if *ed !=0 {
-				header.Set("Sec-WebSocket-Protocol", base64.RawURLEncoding.EncodeToString(ed))
+				header.Set("Sec-WebSocket-Protocol", base64.RawURLEncoding.EncodeToString("ed"))
 		}
 		if *mux != 0 {
 			connectionReuse = true
