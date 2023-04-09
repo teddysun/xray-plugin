@@ -149,9 +149,9 @@ func generateConfig() (*core.Config, error) {
 		}
 		transportSettings = &websocket.Config{
 			Path: *path,
-			Header: []*websocket.Header{
+			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
-			},
+			}),
 			Ed: ed,
 		}
 		if *mux != 0 {
