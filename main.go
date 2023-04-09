@@ -55,7 +55,7 @@ var (
 	remotePort  = flag.String("remotePort", "1080", "remote port to forward.")
 	path        = flag.String("path", "/", "URL path for websocket.")
 	serviceName = flag.String("serviceName", "GunService", "Service name for grpc.")
-	host        = flag.String("host", "cloudflare.com", "Hostname for server.")
+	host        = flag.String("host", "cloudfront.com", "Hostname for server.")
 	tlsEnabled  = flag.Bool("tls", false, "Enable TLS.")
 	cert        = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
 	certRaw     = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
@@ -149,9 +149,9 @@ func generateConfig() (*core.Config, error) {
 		}
 		transportSettings = &websocket.Config{
 			Path: *path,
-			Header: append([]*websocket.Header{
+			Header: []*websocket.Header{
 				{Key: "Host", Value: *host},
-			}),
+			},
 			Ed: ed,
 		}
 		if *mux != 0 {
