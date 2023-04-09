@@ -142,7 +142,7 @@ func generateConfig() (*core.Config, error) {
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
 			}),
-			Ed: *ed,
+			Ed: uint32(*ed),
 		}
 		if *mux != 0 {
 			connectionReuse = true
