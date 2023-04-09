@@ -142,14 +142,14 @@ func generateConfig() (*core.Config, error) {
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
 			}),
-			if u, err := url.Parse(path); err == nil {
-				if q := u.Query(); q.Get("ed") != "" {
+		}
+		if u, err := url.Parse(path); err == nil {
+			if q := u.Query(); q.Get("ed") != "" {
 				Ed, _ := strconv.Atoi(q.Get("ed"))
 				ed = uint32(Ed)
 				q.Del("ed")
 				u.RawQuery = q.Encode()
 				path = u.String()
-				}
 			}
 		}
 		if *mux != 0 {
