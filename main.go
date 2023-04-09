@@ -144,7 +144,7 @@ func generateConfig() (*core.Config, error) {
 				ed = uint32(Ed)
 				q.Del("ed")
 				u.RawQuery = q.Encode()
-				path = String()
+				path = String(u.String())
 			}
 		}
 		transportSettings = &websocket.Config{
