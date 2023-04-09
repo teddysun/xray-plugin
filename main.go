@@ -66,7 +66,7 @@ var (
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
 	version     = flag.Bool("version", false, "Show current version of xray-plugin")
 	fwmark      = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
-	ed          = flag.String("ed", "0", "Websocket 0-RTT")
+	ed          = flag.Int("ed", 0, "Websocket 0-RTT")
 )
 
 func homeDir() string {
@@ -136,7 +136,6 @@ func generateConfig() (*core.Config, error) {
 
 	var transportSettings proto.Message
 	var connectionReuse bool
-	var Ed uint32
 	switch *mode {
 	case "websocket":
 		transportSettings = &websocket.Config{
@@ -146,10 +145,9 @@ func generateConfig() (*core.Config, error) {
 			}),
 		}
 		if *ed !=0 {
-			Ed = uint32(ed)
 			transportSettings = &websocket.Config{
 				Header: append([]*websocket.Header{
-					{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(Ed)},
+					{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(uint32(*ed))},
 				}),
 			}
 		}
