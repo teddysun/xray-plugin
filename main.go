@@ -136,6 +136,7 @@ func generateConfig() (*core.Config, error) {
 
 	var transportSettings proto.Message
 	var connectionReuse bool
+	var Ed uint32
 	switch *mode {
 	case "websocket":
 		transportSettings = &websocket.Config{
@@ -145,9 +146,10 @@ func generateConfig() (*core.Config, error) {
 			}),
 		}
 		if *ed !=0 {
+			Ed = uint32(ed)
 			transportSettings = &websocket.Config{
 				Header: append([]*websocket.Header{
-					{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(uint32(*ed))},
+					{Key: "Sec-WebSocket-Protocol", Value: base64.RawURLEncoding.EncodeToString(Ed)},
 				}),
 			}
 		}
