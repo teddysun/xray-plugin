@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"encoding/base64"
 
 	"github.com/golang/protobuf/proto"
 
@@ -136,7 +135,6 @@ func generateConfig() (*core.Config, error) {
 
 	var transportSettings proto.Message
 	var connectionReuse bool
-	var Ed uint32
 	switch *mode {
 	case "websocket":
 		transportSettings = &websocket.Config{
@@ -148,7 +146,7 @@ func generateConfig() (*core.Config, error) {
 		if *ed !=0 {
 			transportSettings = &websocket.Config{
 				Header: append([]*websocket.Header{
-					{Key: "Sec-WebSocket-Protocol", Value: uint32(*ed)},
+					{Key: "Sec-WebSocket-Protocol", Value: *ed},
 				}),
 			}
 		}
