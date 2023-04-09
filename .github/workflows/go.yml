@@ -22,7 +22,7 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: build-release.sh
+      run: ./build-release.sh
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
