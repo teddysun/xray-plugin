@@ -148,6 +148,7 @@ func generateConfig() (*core.Config, error) {
 			Header: append([]*websocket.Header{
 				{Key: "Sec-WebSocket-Protocol", Value: uint32(*ed)},
 			},
+				      }
 		}
 		if *mux != 0 {
 			connectionReuse = true
