@@ -12,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"net/url"
 
 	"github.com/golang/protobuf/proto"
 
@@ -66,6 +65,7 @@ var (
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
 	version     = flag.Bool("version", false, "Show current version of xray-plugin")
 	fwmark      = flag.Int("fwmark", 0, "Set SO_MARK option for outbound sockets.")
+	ed          = flag.Int("ed", 0, "WebSocket 0-RTT.")
 )
 
 func homeDir() string {
@@ -135,7 +135,6 @@ func generateConfig() (*core.Config, error) {
 
 	var transportSettings proto.Message
 	var connectionReuse bool
-	var ed uint32
 	switch *mode {
 	case "websocket":
 		transportSettings = &websocket.Config{
@@ -143,15 +142,7 @@ func generateConfig() (*core.Config, error) {
 			Header: append([]*websocket.Header{
 				{Key: "Host", Value: *host},
 			}),
-		}
-		if u, err := url.Parse(path); err == nil {
-			if q := u.Query(); q.Get("ed") != "" {
-				Ed, _ := strconv.Atoi(q.Get("ed"))
-				ed = uint32(Ed)
-				q.Del("ed")
-				u.RawQuery = q.Encode()
-				path = u.String()
-			}
+			Ed: *ed,
 		}
 		if *mux != 0 {
 			connectionReuse = true
@@ -300,6 +291,13 @@ func startXRay() (core.Server, error) {
 				*mux = i
 			} else {
 				logWarn("failed to parse mux, use default value")
+			}
+		}
+		if c, b := opts.Get("ed"); b {
+			if i, err := strconv.Atoi(c); err == nil {
+				*ed = i
+			} else {
+				logWarn("failed to parse ed, use default value")
 			}
 		}
 		if _, b := opts.Get("tls"); b {
