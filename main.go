@@ -264,7 +264,7 @@ func generateConfig() (*core.Config, error) {
 	} else {
 		senderConfig := proxyman.SenderConfig{StreamSettings: &streamConfig}
 		if connectionReuse {
-			senderConfig.MultiplexSettings = &proxyman.MultiplexingConfig{Enabled: true, Concurrency: uint32(*mux)}
+			senderConfig.MultiplexSettings = &proxyman.MultiplexingConfig{Enabled: true, Concurrency: int32(*mux)}
 		}
 		return &core.Config{
 			Inbound: []*core.InboundHandlerConfig{{
