@@ -3,7 +3,7 @@ module github.com/teddysun/xray-plugin
 go 1.21.4
 
 require (
-	github.com/xtls/xray-core v1.8.5
+	github.com/xtls/xray-core v1.8.6
 	google.golang.org/protobuf v1.31.0
 )
 
