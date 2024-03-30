@@ -3,7 +3,7 @@ module github.com/teddysun/xray-plugin
 go 1.22
 
 require (
-	github.com/xtls/xray-core v1.8.9
+	github.com/xtls/xray-core v1.8.10
 	google.golang.org/protobuf v1.33.0
 )
 
@@ -19,9 +19,9 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/onsi/ginkgo/v2 v2.16.0 // indirect
 	github.com/pires/go-proxyproto v0.7.0 // indirect
-	github.com/quic-go/quic-go v0.41.0 // indirect
+	github.com/quic-go/quic-go v0.42.0 // indirect
 	github.com/refraction-networking/utls v1.6.3 // indirect
-	github.com/sagernet/sing v0.3.6 // indirect
+	github.com/sagernet/sing v0.3.8 // indirect
 	github.com/xtls/reality v0.0.0-20231112171332-de1173cf2b19 // indirect
 	go.uber.org/mock v0.4.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
