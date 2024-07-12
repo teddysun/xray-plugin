@@ -26,6 +26,7 @@ import (
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/serial"
+	"github.com/xtls/xray-core/common/errors"
 
 	"github.com/xtls/xray-core/proxy/dokodemo"
 	"github.com/xtls/xray-core/proxy/freedom"
@@ -118,11 +119,11 @@ func parseLocalAddr(localAddr string) []string {
 func generateConfig() (*core.Config, error) {
 	lport, err := net.PortFromString(*localPort)
 	if err != nil {
-		return nil, newError("invalid localPort:", *localPort).Base(err)
+		return nil, errors.New("invalid localPort:", *localPort).Base(err)
 	}
 	rport, err := strconv.ParseUint(*remotePort, 10, 32)
 	if err != nil {
-		return nil, newError("invalid remotePort:", *remotePort).Base(err)
+		return nil, errors.New("invalid remotePort:", *remotePort).Base(err)
 	}
 	outboundProxy := serial.ToTypedMessage(&freedom.Config{
 		DestinationOverride: &freedom.DestinationOverride{
@@ -168,7 +169,7 @@ func generateConfig() (*core.Config, error) {
 			ServiceName: *serviceName,
 		}
 	default:
-		return nil, newError("unsupported mode:", *mode)
+		return nil, errors.New("unsupported mode:", *mode)
 	}
 
 	streamConfig := internet.StreamConfig{
@@ -199,7 +200,7 @@ func generateConfig() (*core.Config, error) {
 			}
 			certificate.Certificate, err = readCertificate()
 			if err != nil {
-				return nil, newError("failed to read cert").Base(err)
+				return nil, errors.New("failed to read cert").Base(err)
 			}
 			if *key == "" {
 				*key = fmt.Sprintf("%[1]s/.acme.sh/%[2]s/%[2]s.key", homeDir(), *host)
@@ -207,14 +208,14 @@ func generateConfig() (*core.Config, error) {
 			}
 			certificate.Key, err = filesystem.ReadFile(*key)
 			if err != nil {
-				return nil, newError("failed to read key file").Base(err)
+				return nil, errors.New("failed to read key file").Base(err)
 			}
 			tlsConfig.Certificate = []*tls.Certificate{&certificate}
 		} else if *cert != "" || *certRaw != "" {
 			certificate := tls.Certificate{Usage: tls.Certificate_AUTHORITY_VERIFY}
 			certificate.Certificate, err = readCertificate()
 			if err != nil {
-				return nil, newError("failed to read cert").Base(err)
+				return nil, errors.New("failed to read cert").Base(err)
 			}
 			tlsConfig.Certificate = []*tls.Certificate{&certificate}
 		}
@@ -383,11 +384,11 @@ func startXRay() (core.Server, error) {
 
 	config, err := generateConfig()
 	if err != nil {
-		return nil, newError("failed to parse config").Base(err)
+		return nil, errors.New("failed to parse config").Base(err)
 	}
 	instance, err := core.New(config)
 	if err != nil {
-		return nil, newError("failed to create xray instance").Base(err)
+		return nil, errors.New("failed to create xray instance").Base(err)
 	}
 	return instance, nil
 }
