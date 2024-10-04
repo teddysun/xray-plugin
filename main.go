@@ -41,6 +41,7 @@ import (
 	clog "github.com/xtls/xray-core/common/log"
 
 	"github.com/xtls/xray-core/common/platform/filesystem"
+	"github.com/teddysun/xray-plugin/cmd/build"
 )
 
 var (
@@ -401,9 +402,23 @@ func printCoreVersion() {
 }
 
 func printVersion() {
+	osVersion, osKernel := build.GetOSVersion()
+	if osVersion == "" {
+		osVersion = "unknown"
+	}
+	if osKernel == "" {
+		osKernel = "unknown"
+	}
+
+	arch := build.GetArch()
+
 	fmt.Println("xray-plugin", VERSION)
-	fmt.Println("Go version", runtime.Version())
 	fmt.Println("Yet another SIP003 plugin for shadowsocks")
+	fmt.Printf("- os/version: %s\n", osVersion)
+	fmt.Printf("- os/kernel: %s\n", osKernel)
+	fmt.Printf("- os/type: %s\n", runtime.GOOS)
+	fmt.Printf("- os/arch: %s\n", arch)
+	fmt.Printf("- go/version: %s\n", runtime.Version())
 }
 
 func main() {
