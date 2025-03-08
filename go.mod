@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/shirou/gopsutil/v3 v3.24.5
-	github.com/xtls/xray-core v1.250306.0
+	github.com/xtls/xray-core v1.8.24
 	golang.org/x/sys v0.25.0
 	google.golang.org/protobuf v1.34.2
 )
