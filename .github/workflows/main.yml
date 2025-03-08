@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.DUBUX }}
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ github.event.inputs.release_name }}_${{ github.ref_name }}
           release_name: ${{ github.event.inputs.release_name }}
           draft: false
           prerelease: false
