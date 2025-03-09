@@ -33,7 +33,6 @@ import (
 
 	"github.com/xtls/xray-core/transport/internet"
 	"github.com/xtls/xray-core/transport/internet/grpc"
-	"github.com/xtls/xray-core/transport/internet/quic"
 	"github.com/xtls/xray-core/transport/internet/tls"
 	"github.com/xtls/xray-core/transport/internet/websocket"
 
@@ -164,11 +163,6 @@ func generateConfig() (*core.Config, error) {
 		if *mux != 0 {
 			connectionReuse = true
 		}
-	case "quic":
-		transportSettings = &quic.Config{
-			Security: &protocol.SecurityConfig{Type: protocol.SecurityType_NONE},
-		}
-		*tlsEnabled = true
 	case "grpc":
 		transportSettings = &grpc.Config{
 			ServiceName: *serviceName,
