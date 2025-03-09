@@ -61,7 +61,7 @@ var (
 	cert        = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
 	certRaw     = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
 	key         = flag.String("key", "", "(server) Path to TLS key file. Default: ~/.acme.sh/{host}/{host}.key")
-	mode        = flag.String("mode", "websocket", "Transport mode: websocket, quic (enforced tls), grpc.")
+	mode        = flag.String("mode", "websocket", "Transport mode: websocket, grpc.")
 	mux         = flag.Int("mux", 1, "Concurrent multiplexed connections (websocket client mode only).")
 	server      = flag.Bool("server", false, "Run in server mode")
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
