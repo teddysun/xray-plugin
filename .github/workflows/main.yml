@@ -28,7 +28,7 @@ jobs:
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ github.event.inputs.release_name }}
           files: bin/*
         env:
           GITHUB_TOKEN: ${{ secrets.DUBUX }}
