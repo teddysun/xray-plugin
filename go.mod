@@ -6,7 +6,7 @@ toolchain go1.24.1
 
 require (
 	github.com/shirou/gopsutil/v3 v3.24.5
-	github.com/xtls/xray-core v1.250306.0
+	github.com/xtls/xray-core v1.250516.0
 	golang.org/x/sys v0.31.0
 	google.golang.org/protobuf v1.36.5
 )
