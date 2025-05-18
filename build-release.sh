@@ -16,7 +16,7 @@ if [[ $upx == "echo pending" ]] && hash upx 2>/dev/null; then
 fi
 
 #VERSION=$(git describe --tags)
-VERSION="v1.250306.0"
+VERSION="v1.250516.0"
 LDFLAGS="-X main.VERSION=${VERSION} -s -w -buildid="
 
 OSES=(linux darwin windows freebsd)
