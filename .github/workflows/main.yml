@@ -23,6 +23,7 @@ jobs:
 
       - name: Run build-release.sh
         run: |
+          go mod tidy
           chmod +x ./build-release.sh
           ./build-release.sh
       - name: Upload Release Assets
