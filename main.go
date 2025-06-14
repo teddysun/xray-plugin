@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/url"
 	"os"
 	"os/signal"
 	"os/user"
@@ -12,7 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"net/url"
 
 	"google.golang.org/protobuf/proto"
 
@@ -23,25 +23,24 @@ import (
 	_ "github.com/xtls/xray-core/app/proxyman/inbound"
 	_ "github.com/xtls/xray-core/app/proxyman/outbound"
 
+	"github.com/xtls/xray-core/common/errors"
 	"github.com/xtls/xray-core/common/net"
 	"github.com/xtls/xray-core/common/protocol"
 	"github.com/xtls/xray-core/common/serial"
-	"github.com/xtls/xray-core/common/errors"
 
 	"github.com/xtls/xray-core/proxy/dokodemo"
 	"github.com/xtls/xray-core/proxy/freedom"
 
 	"github.com/xtls/xray-core/transport/internet"
 	"github.com/xtls/xray-core/transport/internet/grpc"
-	"github.com/xtls/xray-core/transport/internet/quic"
 	"github.com/xtls/xray-core/transport/internet/tls"
 	"github.com/xtls/xray-core/transport/internet/websocket"
 
 	vlog "github.com/xtls/xray-core/app/log"
 	clog "github.com/xtls/xray-core/common/log"
 
-	"github.com/xtls/xray-core/common/platform/filesystem"
 	"github.com/teddysun/xray-plugin/cmd/build"
+	"github.com/xtls/xray-core/common/platform/filesystem"
 )
 
 var (
@@ -57,12 +56,12 @@ var (
 	remotePort  = flag.String("remotePort", "1080", "remote port to forward.")
 	path        = flag.String("path", "/", "URL path for websocket.")
 	serviceName = flag.String("serviceName", "GunService", "Service name for grpc.")
-	host        = flag.String("host", "cloudfront.com", "Hostname for server.")
+	host        = flag.String("host", "", "Hostname for server.")
 	tlsEnabled  = flag.Bool("tls", false, "Enable TLS.")
 	cert        = flag.String("cert", "", "Path to TLS certificate file. Overrides certRaw. Default: ~/.acme.sh/{host}/fullchain.cer")
 	certRaw     = flag.String("certRaw", "", "Raw TLS certificate content. Intended only for Android.")
 	key         = flag.String("key", "", "(server) Path to TLS key file. Default: ~/.acme.sh/{host}/{host}.key")
-	mode        = flag.String("mode", "websocket", "Transport mode: websocket, quic (enforced tls), grpc.")
+	mode        = flag.String("mode", "websocket", "Transport mode: websocket, grpc.")
 	mux         = flag.Int("mux", 1, "Concurrent multiplexed connections (websocket client mode only).")
 	server      = flag.Bool("server", false, "Run in server mode")
 	logLevel    = flag.String("loglevel", "", "loglevel for xray: debug, info, warning (default), error, none.")
@@ -151,20 +150,19 @@ func generateConfig() (*core.Config, error) {
 		}
 		transportSettings = &websocket.Config{
 			Path: *path,
-			Host: *host,
 			Header: map[string]string{
 				"host": *host,
 			},
 			Ed: ed,
 		}
+
+		if *host != "" {
+			transportSettings.(*websocket.Config).Host = *host
+		}
+
 		if *mux != 0 {
 			connectionReuse = true
 		}
-	case "quic":
-		transportSettings = &quic.Config{
-			Security: &protocol.SecurityConfig{Type: protocol.SecurityType_NONE},
-		}
-		*tlsEnabled = true
 	case "grpc":
 		transportSettings = &grpc.Config{
 			ServiceName: *serviceName,
@@ -244,7 +242,7 @@ func generateConfig() (*core.Config, error) {
 		for i := 0; i < len(localAddrs); i++ {
 			inbounds[i] = &core.InboundHandlerConfig{
 				ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{
-					PortList:       &net.PortList{
+					PortList: &net.PortList{
 						Range: []*net.PortRange{net.SinglePortRange(lport)},
 					},
 					Listen:         net.NewIPOrDomain(net.ParseAddress(localAddrs[i])),
@@ -272,10 +270,10 @@ func generateConfig() (*core.Config, error) {
 		return &core.Config{
 			Inbound: []*core.InboundHandlerConfig{{
 				ReceiverSettings: serial.ToTypedMessage(&proxyman.ReceiverConfig{
-					PortList:  &net.PortList{
+					PortList: &net.PortList{
 						Range: []*net.PortRange{net.SinglePortRange(lport)},
 					},
-					Listen:    net.NewIPOrDomain(net.ParseAddress(*localAddr)),
+					Listen: net.NewIPOrDomain(net.ParseAddress(*localAddr)),
 				}),
 				ProxySettings: serial.ToTypedMessage(&dokodemo.Config{
 					Address:  net.NewIPOrDomain(net.LocalHostIP),

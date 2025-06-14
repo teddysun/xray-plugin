@@ -1,0 +1,35 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Release name'
+        required: true
+        default: 'Release'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.24.0'  # Specify the Go version
+
+      - name: Run build-release.sh
+        run: |
+          go mod tidy
+          chmod +x ./build-release.sh
+          ./build-release.sh
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: bin/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.DUBUX }}
