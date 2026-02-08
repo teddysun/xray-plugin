@@ -9,6 +9,9 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+// Pre-compile regex for kernel version simplification
+var kernelVersionRegex = regexp.MustCompile(`^(\d+\.\d+\.(\d+\.\d+)) Build (\d+\.\d+)$`)
+
 // GetOSVersion returns OS version, kernel and bitness
 // On Windows it performs additional output enhancements.
 func GetOSVersion() (osVersion, osKernel string) {
@@ -31,7 +34,7 @@ func GetOSVersion() (osVersion, osKernel string) {
 		}
 
 		// Simplify kernel output: `MAJOR.MINOR.BUILD.REVISION Build BUILD.REVISION` -> `MAJOR.MINOR.BUILD.REVISION`
-		match := regexp.MustCompile(`^(\d+\.\d+\.(\d+\.\d+)) Build (\d+\.\d+)$`).FindStringSubmatch(osKernel)
+		match := kernelVersionRegex.FindStringSubmatch(osKernel)
 		if len(match) == 4 && match[2] == match[3] {
 			osKernel = match[1]
 		}

@@ -3,16 +3,10 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"net"
 	"os"
 	"sort"
 	"strings"
 )
-
-func isIPv6(str string) bool {
-	ip := net.ParseIP(str)
-	return ip != nil && strings.Contains(str, ":")
-}
 
 // Key–value mappings for the representation of client and server options.
 

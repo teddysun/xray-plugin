@@ -89,7 +89,7 @@ func readCertificate() ([]byte, error) {
 		fixedCert := certHead + "\n" + *certRaw + "\n" + certTail
 		return []byte(fixedCert), nil
 	}
-	panic("thou shalt not reach hear")
+	panic("thou shalt not reach here")
 }
 
 func logConfig(logLevel string) *vlog.Config {
@@ -294,8 +294,10 @@ func generateConfig() (*core.Config, error) {
 func startXRay() (core.Server, error) {
 
 	opts, err := parseEnv()
-
-	if err == nil {
+	if err != nil {
+		logWarn("failed to parse env options:", err)
+	}
+	if opts != nil {
 		if c, b := opts.Get("mode"); b {
 			*mode = c
 		}
@@ -424,7 +426,7 @@ func printVersion() {
 func main() {
 	flag.Parse()
 
-	if *version {
+	if *version || (len(flag.Args()) > 0 && flag.Args()[0] == "version") {
 		printVersion()
 		return
 	}
