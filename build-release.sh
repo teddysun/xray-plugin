@@ -71,8 +71,8 @@ for os in "${OSES[@]}"; do
         fi
         env CGO_ENABLED=0 GOOS=${os} GOARCH=${arch} go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_${os}_${arch}${suffix}
         $upx xray-plugin_${os}_${arch}${suffix} >/dev/null
-        tar -zcf bin/xray-plugin-${os}-${arch}-${VERSION}.tar.gz xray-plugin_${os}_${arch}${suffix}
-        $sum bin/xray-plugin-${os}-${arch}-${VERSION}.tar.gz
+        tar -zcf bin/xray-plugin-${os}-${arch}-${VERSION_BASE}.tar.gz xray-plugin_${os}_${arch}${suffix}
+        $sum bin/xray-plugin-${os}-${arch}-${VERSION_BASE}.tar.gz
     done
 done
 
@@ -82,26 +82,26 @@ for v in "${ARMS[@]}"; do
     env CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=${v} go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_arm${v}
 done
 $upx xray-plugin_linux_arm* >/dev/null
-tar -zcf bin/xray-plugin-linux-arm-${VERSION}.tar.gz xray-plugin_linux_arm*
-$sum bin/xray-plugin-linux-arm-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-arm-${VERSION_BASE}.tar.gz xray-plugin_linux_arm*
+$sum bin/xray-plugin-linux-arm-${VERSION_BASE}.tar.gz
 
 # ARM64 (ARMv8 or aarch64)
 env CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_arm64
 $upx xray-plugin_linux_arm64 >/dev/null
-tar -zcf bin/xray-plugin-linux-arm64-${VERSION}.tar.gz xray-plugin_linux_arm64
-$sum bin/xray-plugin-linux-arm64-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-arm64-${VERSION_BASE}.tar.gz xray-plugin_linux_arm64
+$sum bin/xray-plugin-linux-arm64-${VERSION_BASE}.tar.gz
 
 # Darwin ARM64
 env CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_darwin_arm64
 $upx xray-plugin_darwin_arm64 >/dev/null
-tar -zcf bin/xray-plugin-darwin-arm64-${VERSION}.tar.gz xray-plugin_darwin_arm64
-$sum bin/xray-plugin-darwin-arm64-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-darwin-arm64-${VERSION_BASE}.tar.gz xray-plugin_darwin_arm64
+$sum bin/xray-plugin-darwin-arm64-${VERSION_BASE}.tar.gz
 
 # Windows ARM64
 env CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_windows_arm64.exe
 $upx xray-plugin_windows_arm64.exe >/dev/null
-tar -zcf bin/xray-plugin-windows-arm64-${VERSION}.tar.gz xray-plugin_windows_arm64.exe
-$sum bin/xray-plugin-windows-arm64-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-windows-arm64-${VERSION_BASE}.tar.gz xray-plugin_windows_arm64.exe
+$sum bin/xray-plugin-windows-arm64-${VERSION_BASE}.tar.gz
 
 # MIPS
 MIPSS=(mips mipsle)
@@ -110,34 +110,34 @@ for v in "${MIPSS[@]}"; do
     env CGO_ENABLED=0 GOOS=linux GOARCH=${v} GOMIPS=softfloat go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_${v}_sf
 done
 $upx xray-plugin_linux_mips* >/dev/null
-tar -zcf bin/xray-plugin-linux-mips-${VERSION}.tar.gz xray-plugin_linux_mips*
-$sum bin/xray-plugin-linux-mips-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-mips-${VERSION_BASE}.tar.gz xray-plugin_linux_mips*
+$sum bin/xray-plugin-linux-mips-${VERSION_BASE}.tar.gz
 
 # MIPS64
 MIPS64S=(mips64 mips64le)
 for v in "${MIPS64S[@]}"; do
     env CGO_ENABLED=0 GOOS=linux GOARCH=${v} go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_${v}
 done
-tar -zcf bin/xray-plugin-linux-mips64-${VERSION}.tar.gz xray-plugin_linux_mips64*
-$sum bin/xray-plugin-linux-mips64-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-mips64-${VERSION_BASE}.tar.gz xray-plugin_linux_mips64*
+$sum bin/xray-plugin-linux-mips64-${VERSION_BASE}.tar.gz
 
 # ppc64le
 env CGO_ENABLED=0 GOOS=linux GOARCH=ppc64le go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_ppc64le
 $upx xray-plugin_linux_ppc64le >/dev/null
-tar -zcf bin/xray-plugin-linux-ppc64le-${VERSION}.tar.gz xray-plugin_linux_ppc64le
-$sum bin/xray-plugin-linux-ppc64le-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-ppc64le-${VERSION_BASE}.tar.gz xray-plugin_linux_ppc64le
+$sum bin/xray-plugin-linux-ppc64le-${VERSION_BASE}.tar.gz
 
 # s390x
 env CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_s390x
 $upx xray-plugin_linux_s390x >/dev/null
-tar -zcf bin/xray-plugin-linux-s390x-${VERSION}.tar.gz xray-plugin_linux_s390x
-$sum bin/xray-plugin-linux-s390x-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-s390x-${VERSION_BASE}.tar.gz xray-plugin_linux_s390x
+$sum bin/xray-plugin-linux-s390x-${VERSION_BASE}.tar.gz
 
 # riscv64
 env CGO_ENABLED=0 GOOS=linux GOARCH=riscv64 go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_linux_riscv64
 $upx xray-plugin_linux_riscv64 >/dev/null
-tar -zcf bin/xray-plugin-linux-riscv64-${VERSION}.tar.gz xray-plugin_linux_riscv64
-$sum bin/xray-plugin-linux-riscv64-${VERSION}.tar.gz
+tar -zcf bin/xray-plugin-linux-riscv64-${VERSION_BASE}.tar.gz xray-plugin_linux_riscv64
+$sum bin/xray-plugin-linux-riscv64-${VERSION_BASE}.tar.gz
 
 # Clean up generated files
 if [ -f "versioninfo_generated.json" ]; then
