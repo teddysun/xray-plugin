@@ -16,14 +16,13 @@ if [[ $upx == "echo pending" ]] && hash upx 2>/dev/null; then
 fi
 
 VERSION=$(git describe --tags)
-LDFLAGS="-X main.VERSION=${VERSION} -s -w -buildid="
 
 # Parse version for versioninfo (format: x.x.x.x or x.x.x)
 # Remove 'v' prefix and extract version components
 VERSION_CLEAN=${VERSION#v}
 # Extract base version (remove -X-gXXXXXXX suffix if exists), e.g., v5.44.1-1-g00092ea -> 5.44.1
 VERSION_BASE=$(echo "${VERSION_CLEAN}" | sed -E 's/-[0-9]+-g[0-9a-f]+$//')
-IFS='.-' read -r MAJOR MINOR PATCH BUILD <<< "$VERSION_BASE"
+IFS='.-' read -r MAJOR MINOR PATCH BUILD <<< "${VERSION_BASE}"
 # Set defaults if empty
 MAJOR=${MAJOR:-0}
 MINOR=${MINOR:-0}
@@ -55,6 +54,7 @@ fi
 
 OSES=(linux darwin windows freebsd)
 ARCHS=(amd64 386)
+LDFLAGS="-X main.VERSION=${VERSION_BASE} -s -w -buildid="
 
 mkdir bin
 
