@@ -97,12 +97,6 @@ $upx xray-plugin_darwin_arm64 >/dev/null
 tar -zcf bin/xray-plugin-darwin-arm64-${VERSION}.tar.gz xray-plugin_darwin_arm64
 $sum bin/xray-plugin-darwin-arm64-${VERSION}.tar.gz
 
-# Windows ARM
-env CGO_ENABLED=0 GOOS=windows GOARCH=arm go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_windows_arm.exe
-$upx xray-plugin_windows_arm.exe >/dev/null
-tar -zcf bin/xray-plugin-windows-arm-${VERSION}.tar.gz xray-plugin_windows_arm.exe
-$sum bin/xray-plugin-windows-arm-${VERSION}.tar.gz
-
 # Windows ARM64
 env CGO_ENABLED=0 GOOS=windows GOARCH=arm64 go build -v -trimpath -ldflags "${LDFLAGS}" -o xray-plugin_windows_arm64.exe
 $upx xray-plugin_windows_arm64.exe >/dev/null
