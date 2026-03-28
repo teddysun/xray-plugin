@@ -50,6 +50,7 @@ if hash goversioninfo 2>/dev/null; then
     # Generate platform-specific .syso files for all Windows architectures
     # This creates resource_windows_386.syso, resource_windows_amd64.syso, resource_windows_arm.syso, resource_windows_arm64.syso
     goversioninfo -platform-specific versioninfo_generated.json
+    mv *.syso ./cmd/xray-plugin
 fi
 
 OSES=(linux darwin windows freebsd)
@@ -144,4 +145,4 @@ if [ -f "versioninfo_generated.json" ]; then
     rm -f versioninfo_generated.json
 fi
 # Clean up generated .syso files
-rm -f resource_*.syso 2>/dev/null
+rm -f ./cmd/xray-plugin/resource_*.syso 2>/dev/null
