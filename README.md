@@ -1,4 +1,4 @@
-# Xray Plugin (Refactored)
+# xray-plugin (Refactored)
 
 重构后的 xray-plugin，基于 Xray-core 的 Shadowsocks SIP003 插件。
 
@@ -13,7 +13,8 @@
 - **TLS 支持**: 自动证书管理和自定义证书
 - **伪装支持**: Hysteria 服务器支持多种伪装模式（404、文件、反向代理、自定义响应）
 - **系统信息**: 使用 gopsutil 获取详细的系统版本和架构信息
-- **跨平台**: 支持 Linux、Windows
+- **跨平台**: 支持 Linux、Windows、Android
+- **Android 支持**: logcat 日志输出、VPN fd 保护（VpnService.protect）
 - **单元测试**: 配置解析全覆盖测试
 
 ## 项目结构
@@ -21,7 +22,12 @@
 ```
 xray-plugin-refactored/
 ├── cmd/xray-plugin/          # 主入口
-│   └── main.go
+│   ├── main.go               # 程序入口
+│   ├── log_android.go        # Android logcat 日志（CGO）
+│   ├── log_other.go          # 非 Android 日志（空实现）
+│   ├── utils_android.go      # Android VPN fd 保护（CGO）
+│   ├── utils_other.go        # 非 Android（空实现）
+│   └── platform_test.go      # 平台初始化测试
 ├── internal/
 │   ├── config/               # 配置管理
 │   │   ├── config.go         # 配置结构体和验证
@@ -51,6 +57,11 @@ go build -v -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -o xray-plugin 
 
 # 指定版本号构建
 go build -ldflags "-X main.VERSION=v1.0.0" -o xray-plugin ./cmd/xray-plugin
+
+# Android 交叉编译（需要 NDK）
+CGO_ENABLED=1 CC=$NDK_TOOLCHAIN/bin/aarch64-linux-android21-clang \
+  GOOS=android GOARCH=arm64 \
+  go build -v -trimpath -ldflags "-s -w" -o xray-plugin ./cmd/xray-plugin
 
 # 运行测试
 go test ./...
@@ -360,6 +371,7 @@ go test -v ./...
 | ARM 架构检测 | ✅ | ✅ 完整支持 |
 | Hysteria 服务器 | ❌ | ✅ 新增支持 |
 | 伪装 (Masquerade) | ❌ | ✅ 404/文件/代理/自定义 |
+| Android 支持 | ✅ logcat + fd 保护 | ✅ 完整保留 |
 | Xray-core 集成 | 内联 | ✅ 模块化 |
 | 单元测试 | 无 | ✅ 28个测试 |
 | 配置文件 | 无 | ✅ JSON 支持 |
