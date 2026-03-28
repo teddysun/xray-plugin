@@ -1,0 +1,27 @@
+{
+    "FixedFileInfo": {
+        "FileVersion": {
+            "Major": %MAJOR%,
+            "Minor": %MINOR%,
+            "Patch": %PATCH%,
+            "Build": %BUILD%
+        },
+        "ProductVersion": {
+            "Major": %MAJOR%,
+            "Minor": %MINOR%,
+            "Patch": %PATCH%,
+            "Build": %BUILD%
+        }
+    },
+    "StringFileInfo": {
+        "CompanyName": "Teddysun",
+        "FileDescription": "A SIP003 plugin based on Xray-core",
+        "FileVersion": "%VERSION%",
+        "InternalName": "xray-plugin",
+        "LegalCopyright": "Copyright (c) 2020 - 2026",
+        "OriginalFilename": "xray-plugin.exe",
+        "ProductName": "xray-plugin",
+        "ProductVersion": "%VERSION%"
+    },
+    "IconPath": "assets/xray.ico"
+}
