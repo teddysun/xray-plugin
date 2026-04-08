@@ -151,7 +151,6 @@ func generateConfig() (*core.Config, error) {
 		}
 		transportSettings = &websocket.Config{
 			Path: *path,
-			Host: *host,
 			Header: map[string]string{
 				"host": *host,
 			},
