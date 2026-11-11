@@ -309,62 +309,62 @@ func TestGenerateConfigTransports(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				inbound, err := generated.Inbound[0].ProxySettings.GetInstance()
+				inbound, err := generated.GetInbound()[0].GetProxySettings().GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
 				door := mustType[*dokodemo.Config](t, inbound)
-				if len(door.AllowedNetworks) != 1 || door.AllowedNetworks[0] != net.Network_TCP {
-					t.Fatalf("unexpected inbound networks: %v", door.AllowedNetworks)
+				if len(door.GetAllowedNetworks()) != 1 || door.GetAllowedNetworks()[0] != net.Network_TCP {
+					t.Fatalf("unexpected inbound networks: %v", door.GetAllowedNetworks())
 				}
 				if door.GetPredefinedAddress() != net.LocalHostIP {
-					t.Fatalf("unexpected rewrite address: %v", door.RewriteAddress)
+					t.Fatalf("unexpected rewrite address: %v", door.GetRewriteAddress())
 				}
 				var stream *internet.StreamConfig
 				if server {
-					receiver, err := generated.Inbound[0].ReceiverSettings.GetInstance()
+					receiver, err := generated.GetInbound()[0].GetReceiverSettings().GetInstance()
 					if err != nil {
 						t.Fatal(err)
 					}
-					stream = mustType[*proxyman.ReceiverConfig](t, receiver).StreamSettings
+					stream = mustType[*proxyman.ReceiverConfig](t, receiver).GetStreamSettings()
 				} else {
-					sender, err := generated.Outbound[0].SenderSettings.GetInstance()
+					sender, err := generated.GetOutbound()[0].GetSenderSettings().GetInstance()
 					if err != nil {
 						t.Fatal(err)
 					}
-					stream = mustType[*proxyman.SenderConfig](t, sender).StreamSettings
+					stream = mustType[*proxyman.SenderConfig](t, sender).GetStreamSettings()
 				}
-				if stream.ProtocolName != mode || len(stream.TransportSettings) != 1 || stream.TransportSettings[0].ProtocolName != mode {
+				if stream.GetProtocolName() != mode || len(stream.GetTransportSettings()) != 1 || stream.GetTransportSettings()[0].GetProtocolName() != mode {
 					t.Fatalf("unexpected transport: %v", stream)
 				}
-				transport, err := stream.TransportSettings[0].Settings.GetInstance()
+				transport, err := stream.GetTransportSettings()[0].GetSettings().GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
 				switch mode {
 				case "websocket":
 					ws := mustType[*websocket.Config](t, transport)
-					if ws.Host != cfg.Host || ws.Path != cfg.Path || ws.Header["host"] != cfg.Host {
+					if ws.GetHost() != cfg.Host || ws.GetPath() != cfg.Path || ws.GetHeader()["host"] != cfg.Host {
 						t.Fatalf("unexpected websocket: %v", ws)
 					}
 				case "grpc":
-					if mustType[*grpc.Config](t, transport).ServiceName != cfg.ServiceName {
+					if mustType[*grpc.Config](t, transport).GetServiceName() != cfg.ServiceName {
 						t.Fatal("unexpected grpc service")
 					}
 				case "hysteria":
-					if mustType[*hysteria.Config](t, transport).UdpIdleTimeout != 60 || stream.QuicParams == nil {
+					if mustType[*hysteria.Config](t, transport).GetUdpIdleTimeout() != 60 || stream.GetQuicParams() == nil {
 						t.Fatal("unexpected hysteria settings")
 					}
 				}
-				if len(stream.Udpmasks) != 0 {
+				if len(stream.GetUdpmasks()) != 0 {
 					t.Fatalf("unexpected UDP mask: %v", stream)
 				}
 				// Hysteria 客户端始终启用 TLS，其余情况在未指定 tls 时不启用
 				if mode == "hysteria" && !server {
-					if len(stream.SecuritySettings) != 1 || stream.SecurityType != stream.SecuritySettings[0].Type {
+					if len(stream.GetSecuritySettings()) != 1 || stream.GetSecurityType() != stream.GetSecuritySettings()[0].GetType() {
 						t.Fatalf("missing TLS for hysteria client: %v", stream)
 					}
-				} else if stream.SecurityType != "" || len(stream.SecuritySettings) != 0 {
+				} else if stream.GetSecurityType() != "" || len(stream.GetSecuritySettings()) != 0 {
 					t.Fatalf("unexpected TLS: %v", stream)
 				}
 			})
@@ -386,37 +386,37 @@ func TestGenerateConfigHysteriaUDPHop(t *testing.T) {
 			}
 			var stream *internet.StreamConfig
 			if server {
-				receiver, err := generated.Inbound[0].ReceiverSettings.GetInstance()
+				receiver, err := generated.GetInbound()[0].GetReceiverSettings().GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream = mustType[*proxyman.ReceiverConfig](t, receiver).StreamSettings
+				stream = mustType[*proxyman.ReceiverConfig](t, receiver).GetStreamSettings()
 			} else {
-				sender, err := generated.Outbound[0].SenderSettings.GetInstance()
+				sender, err := generated.GetOutbound()[0].GetSenderSettings().GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream = mustType[*proxyman.SenderConfig](t, sender).StreamSettings
+				stream = mustType[*proxyman.SenderConfig](t, sender).GetStreamSettings()
 			}
 			if server || ports[0] == 0 || ports[1] <= ports[0] {
-				if len(stream.Udpmasks) != 0 {
+				if len(stream.GetUdpmasks()) != 0 {
 					t.Fatalf("unexpected mask: server=%v ports=%v", server, ports)
 				}
 				continue
 			}
-			if len(stream.Udpmasks) != 1 {
+			if len(stream.GetUdpmasks()) != 1 {
 				t.Fatal("missing udphop mask")
 			}
-			mask, err := stream.Udpmasks[0].GetInstance()
+			mask, err := stream.GetUdpmasks()[0].GetInstance()
 			if err != nil {
 				t.Fatal(err)
 			}
 			hop := mustType[*udphop.Config](t, mask)
-			if !hop.Remote || !hop.Local || hop.RemoteOnce || hop.IntervalMin != 30 || hop.IntervalMax != 30 || len(hop.RemoteIPs) != 0 || len(hop.RemotePorts) != ports[1]-ports[0]+1 {
+			if !hop.GetRemote() || !hop.GetLocal() || hop.GetRemoteOnce() || hop.GetIntervalMin() != 30 || hop.GetIntervalMax() != 30 || len(hop.GetRemoteIPs()) != 0 || len(hop.GetRemotePorts()) != ports[1]-ports[0]+1 {
 				t.Fatalf("unexpected udphop: %v", hop)
 			}
-			for i, port := range hop.RemotePorts {
-				if port != uint32(ports[0]+i) {
+			for i, port := range hop.GetRemotePorts() {
+				if int(port) != ports[0]+i {
 					t.Fatalf("unexpected port: %d", port)
 				}
 			}
@@ -435,14 +435,15 @@ func TestGenerateConfigHysteriaTLS(t *testing.T) {
 				cfg.LocalPort, cfg.RemotePort = "1080", "443"
 				cfg.TLS.Enabled = enabled
 				var wantCert []byte
-				if certificate == "file" {
+				switch certificate {
+				case "file":
 					cfg.TLS.Cert = certPath
 					var err error
 					wantCert, err = os.ReadFile(certPath)
 					if err != nil {
 						t.Fatal(err)
 					}
-				} else if certificate == "raw" {
+				case "raw":
 					cfg.TLS.CertRaw = "test certificate"
 					wantCert = []byte(cfg.TLS.CertRaw)
 				}
@@ -450,31 +451,31 @@ func TestGenerateConfigHysteriaTLS(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				sender, err := generated.Outbound[0].SenderSettings.GetInstance()
+				sender, err := generated.GetOutbound()[0].GetSenderSettings().GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream := mustType[*proxyman.SenderConfig](t, sender).StreamSettings
+				stream := mustType[*proxyman.SenderConfig](t, sender).GetStreamSettings()
 				// 无论是否指定 tls 选项，Hysteria 客户端都必须带 TLS 配置
-				if len(stream.SecuritySettings) != 1 {
+				if len(stream.GetSecuritySettings()) != 1 {
 					t.Fatalf("missing TLS settings (tls option = %v)", enabled)
 				}
-				security, err := stream.SecuritySettings[0].GetInstance()
+				security, err := stream.GetSecuritySettings()[0].GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
 				securityConfig := mustType[*tls.Config](t, security)
-				if securityConfig.ServerName != host || stream.SecurityType != stream.SecuritySettings[0].Type {
+				if securityConfig.GetServerName() != host || stream.GetSecurityType() != stream.GetSecuritySettings()[0].GetType() {
 					t.Fatalf("unexpected TLS: %v", securityConfig)
 				}
-				if len(securityConfig.PinnedPeerCertSha256) != 0 || len(securityConfig.VerifyPeerCertByName) != 0 {
+				if len(securityConfig.GetPinnedPeerCertSha256()) != 0 || len(securityConfig.GetVerifyPeerCertByName()) != 0 {
 					t.Fatal("unexpected verification override")
 				}
 				if wantCert == nil {
-					if len(securityConfig.Certificate) != 0 {
+					if len(securityConfig.GetCertificate()) != 0 {
 						t.Fatal("unexpected certificate")
 					}
-				} else if len(securityConfig.Certificate) != 1 || securityConfig.Certificate[0].Usage != tls.Certificate_AUTHORITY_VERIFY || string(securityConfig.Certificate[0].Certificate) != string(wantCert) {
+				} else if len(securityConfig.GetCertificate()) != 1 || securityConfig.GetCertificate()[0].GetUsage() != tls.Certificate_AUTHORITY_VERIFY || string(securityConfig.GetCertificate()[0].GetCertificate()) != string(wantCert) {
 					t.Fatal("unexpected authority certificate")
 				}
 			}
