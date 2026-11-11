@@ -122,10 +122,10 @@ func ArgsToConfig(args Args) (*Config, error) {
 	// 因为 SS_REMOTE_HOST/PORT 才是服务器外部地址
 	if isServer {
 		if cfg.RemoteAddr != "" {
-			cfg.LocalAddr = cfg.RemoteAddr
+			cfg.LocalAddr, cfg.RemoteAddr = cfg.RemoteAddr, cfg.LocalAddr
 		}
 		if cfg.RemotePort != "" {
-			cfg.LocalPort = cfg.RemotePort
+			cfg.LocalPort, cfg.RemotePort = cfg.RemotePort, cfg.LocalPort
 		}
 	}
 	

@@ -138,6 +138,28 @@ func TestParseEnv(t *testing.T) {
 	}
 }
 
+// SIP003 服务器模式：监听 SS_REMOTE_HOST/PORT，转发到 SS_LOCAL_HOST/PORT（ss-server 本地端口）
+func TestArgsToConfigServerSIP003(t *testing.T) {
+	args := make(Args)
+	args.Add("remoteAddr", "0.0.0.0")
+	args.Add("remotePort", "443")
+	args.Add("localAddr", "127.0.0.1")
+	args.Add("localPort", "52000")
+	args.Add("server", "")
+
+	cfg, err := ArgsToConfig(args)
+	if err != nil {
+		t.Fatalf("ArgsToConfig failed: %v", err)
+	}
+
+	if cfg.LocalAddr != "0.0.0.0" || cfg.LocalPort != "443" {
+		t.Errorf("Expected listen 0.0.0.0:443, got %s:%s", cfg.LocalAddr, cfg.LocalPort)
+	}
+	if cfg.RemoteAddr != "127.0.0.1" || cfg.RemotePort != "52000" {
+		t.Errorf("Expected forward to 127.0.0.1:52000, got %s:%s", cfg.RemoteAddr, cfg.RemotePort)
+	}
+}
+
 func TestArgsToConfig(t *testing.T) {
 	args := make(Args)
 	args.Add("localAddr", "0.0.0.0")
