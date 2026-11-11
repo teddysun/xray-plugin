@@ -150,6 +150,11 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("host is required when TLS is enabled")
 	}
 	
+	// 客户端 UDP 端口跳跃：端口范围不能超过 65535
+	if c.Mode == "hysteria" && !c.Server && c.Hysteria.MinPort > 0 && c.Hysteria.MaxPort > c.Hysteria.MinPort && c.Hysteria.MaxPort > 65535 {
+		return fmt.Errorf("hysteriaMaxPort must not exceed 65535: %d", c.Hysteria.MaxPort)
+	}
+
 	return nil
 }
 

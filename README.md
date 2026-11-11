@@ -355,10 +355,10 @@ go test -v ./...
 
 ## 依赖
 
-- Go 1.26+
-- github.com/xtls/xray-core v1.260327.0
+- Go 1.27+
+- github.com/xtls/xray-core v26.11.9 (v1.260327.1-0.20261109052709-676eaf66f8f0)
 - github.com/shirou/gopsutil/v4 v4.25.12
-- golang.org/x/sys v0.42.0
+- golang.org/x/sys v0.49.0
 
 ## 与原版对比
 

@@ -24,6 +24,7 @@ import (
 	"github.com/xtls/xray-core/proxy/dokodemo"
 	"github.com/xtls/xray-core/proxy/freedom"
 	"github.com/xtls/xray-core/transport/internet"
+	"github.com/xtls/xray-core/transport/internet/finalmask/udphop"
 	"github.com/xtls/xray-core/transport/internet/grpc"
 	"github.com/xtls/xray-core/transport/internet/hysteria"
 	"github.com/xtls/xray-core/transport/internet/tls"
@@ -102,6 +103,7 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 	var connectionReuse bool
 	var protocolName string
 	var quicParams *internet.QuicParams
+	var udpMasks []*serial.TypedMessage
 	tlsEnabled := cfg.TLS.Enabled
 
 	switch cfg.Mode {
@@ -137,10 +139,8 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 
 	case "hysteria":
 		// Hysteria 传输配置
-		// xray-core v1.260327.0 精简了 hysteria.Config，大部分参数移到 QuicParams
-		hysCfg := &hysteria.Config{
-			Version: 2,
-		}
+		// 新版 Xray-core 仅支持 Hysteria 2，无需版本字段。
+		hysCfg := &hysteria.Config{}
 
 		// 认证 (必须)
 		if cfg.Hysteria.Auth != "" {
@@ -194,13 +194,19 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 			}
 		}
 
-		// 客户端: UDP 端口跳跃
+		// 客户端 UDP 跳跃端口，默认间隔 30 秒。
 		if !cfg.Server && cfg.Hysteria.MinPort > 0 && cfg.Hysteria.MaxPort > cfg.Hysteria.MinPort {
 			ports := make([]uint32, 0, cfg.Hysteria.MaxPort-cfg.Hysteria.MinPort+1)
 			for port := cfg.Hysteria.MinPort; port <= cfg.Hysteria.MaxPort; port++ {
 				ports = append(ports, uint32(port))
 			}
-			qp.UdpHop = &internet.UdpHop{Ports: ports}
+			udpMasks = []*serial.TypedMessage{serial.ToTypedMessage(&udphop.Config{
+				Local:       true,
+				Remote:      true,
+				RemotePorts: ports,
+				IntervalMin: 30,
+				IntervalMax: 30,
+			})}
 		}
 
 		// 流控窗口 (字节)
@@ -227,9 +233,10 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 
 		quicParams = qp
 
-		// Hysteria 客户端使用自己的 TLS 实现，但服务器模式需要标准 TLS
+		// Hysteria 2 始终基于 TLS：拨号器要求 TLS 配置（为空则报 "tls config is nil"），
+		// 客户端无需显式指定 tls 选项。
 		if !cfg.Server {
-			tlsEnabled = false
+			tlsEnabled = true
 		}
 
 	default:
@@ -243,6 +250,7 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 			Settings:     serial.ToTypedMessage(transportSettings),
 		}},
 		QuicParams: quicParams,
+		Udpmasks:   udpMasks,
 	}
 
 	if cfg.FastOpen || cfg.Fwmark != 0 {
@@ -323,8 +331,8 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 					StreamSettings: &streamConfig,
 				}),
 				ProxySettings: serial.ToTypedMessage(&dokodemo.Config{
-					Address:  net.NewIPOrDomain(proxyAddress),
-					Networks: []net.Network{net.Network_TCP},
+					RewriteAddress:  net.NewIPOrDomain(proxyAddress),
+					AllowedNetworks: []net.Network{net.Network_TCP},
 				}),
 			}
 		}
@@ -354,8 +362,8 @@ func generateConfig(cfg *config.Config) (*core.Config, error) {
 					Listen: net.NewIPOrDomain(net.ParseAddress(cfg.LocalAddr)),
 				}),
 				ProxySettings: serial.ToTypedMessage(&dokodemo.Config{
-					Address:  net.NewIPOrDomain(net.LocalHostIP),
-					Networks: []net.Network{net.Network_TCP},
+					RewriteAddress:  net.NewIPOrDomain(net.LocalHostIP),
+					AllowedNetworks: []net.Network{net.Network_TCP},
 				}),
 			}},
 			Outbound: []*core.OutboundHandlerConfig{{
