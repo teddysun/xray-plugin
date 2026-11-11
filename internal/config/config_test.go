@@ -111,6 +111,39 @@ func TestConfigValidate(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "hysteria client hop range above 65535",
+			cfg: &Config{
+				LocalPort:  "1984",
+				RemotePort: "443",
+				Mode:       "hysteria",
+				Hysteria:   HysteriaConfig{MinPort: 60000, MaxPort: 70000},
+			},
+			wantErr: true,
+		},
+		{
+			name: "hysteria client hop range up to 65535",
+			cfg: &Config{
+				LocalPort:  "1984",
+				RemotePort: "443",
+				Mode:       "hysteria",
+				Hysteria:   HysteriaConfig{MinPort: 60000, MaxPort: 65535},
+			},
+			wantErr: false,
+		},
+		{
+			name: "hysteria server ignores hop range",
+			cfg: &Config{
+				Server:     true,
+				LocalPort:  "443",
+				RemotePort: "8388",
+				Mode:       "hysteria",
+				Host:       "example.com",
+				TLS:        TLSConfig{Enabled: true},
+				Hysteria:   HysteriaConfig{MinPort: 60000, MaxPort: 70000},
+			},
+			wantErr: false,
+		},
 	}
 	
 	for _, tt := range tests {

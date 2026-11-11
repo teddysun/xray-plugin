@@ -277,6 +277,16 @@ func TestNewServerHysteriaWithURLMasq(t *testing.T) {
 	}
 }
 
+// mustType 断言类型，类型不符时以明确信息结束测试，而不是 panic。
+func mustType[T any](t *testing.T, v interface{}) T {
+	t.Helper()
+	x, ok := v.(T)
+	if !ok {
+		t.Fatalf("unexpected type %T", v)
+	}
+	return x
+}
+
 // 检查各传输及客户端、服务器配置。
 func TestGenerateConfigTransports(t *testing.T) {
 	for _, mode := range []string{"websocket", "grpc", "hysteria"} {
@@ -303,7 +313,7 @@ func TestGenerateConfigTransports(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				door := inbound.(*dokodemo.Config)
+				door := mustType[*dokodemo.Config](t, inbound)
 				if len(door.AllowedNetworks) != 1 || door.AllowedNetworks[0] != net.Network_TCP {
 					t.Fatalf("unexpected inbound networks: %v", door.AllowedNetworks)
 				}
@@ -316,13 +326,13 @@ func TestGenerateConfigTransports(t *testing.T) {
 					if err != nil {
 						t.Fatal(err)
 					}
-					stream = receiver.(*proxyman.ReceiverConfig).StreamSettings
+					stream = mustType[*proxyman.ReceiverConfig](t, receiver).StreamSettings
 				} else {
 					sender, err := generated.Outbound[0].SenderSettings.GetInstance()
 					if err != nil {
 						t.Fatal(err)
 					}
-					stream = sender.(*proxyman.SenderConfig).StreamSettings
+					stream = mustType[*proxyman.SenderConfig](t, sender).StreamSettings
 				}
 				if stream.ProtocolName != mode || len(stream.TransportSettings) != 1 || stream.TransportSettings[0].ProtocolName != mode {
 					t.Fatalf("unexpected transport: %v", stream)
@@ -333,16 +343,16 @@ func TestGenerateConfigTransports(t *testing.T) {
 				}
 				switch mode {
 				case "websocket":
-					ws := transport.(*websocket.Config)
+					ws := mustType[*websocket.Config](t, transport)
 					if ws.Host != cfg.Host || ws.Path != cfg.Path || ws.Header["host"] != cfg.Host {
 						t.Fatalf("unexpected websocket: %v", ws)
 					}
 				case "grpc":
-					if transport.(*grpc.Config).ServiceName != cfg.ServiceName {
+					if mustType[*grpc.Config](t, transport).ServiceName != cfg.ServiceName {
 						t.Fatal("unexpected grpc service")
 					}
 				case "hysteria":
-					if transport.(*hysteria.Config).UdpIdleTimeout != 60 || stream.QuicParams == nil {
+					if mustType[*hysteria.Config](t, transport).UdpIdleTimeout != 60 || stream.QuicParams == nil {
 						t.Fatal("unexpected hysteria settings")
 					}
 				}
@@ -362,6 +372,7 @@ func TestGenerateConfigTransports(t *testing.T) {
 	}
 }
 
+// TestGenerateConfigHysteriaUDPHop 检查客户端 UDP 端口跳跃掩码（仅在端口范围有效时生成）。
 func TestGenerateConfigHysteriaUDPHop(t *testing.T) {
 	for _, server := range []bool{false, true} {
 		for _, ports := range [][2]int{{0, 0}, {0, 20100}, {20000, 0}, {20000, 20000}, {20100, 20000}, {20000, 20100}} {
@@ -379,13 +390,13 @@ func TestGenerateConfigHysteriaUDPHop(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream = receiver.(*proxyman.ReceiverConfig).StreamSettings
+				stream = mustType[*proxyman.ReceiverConfig](t, receiver).StreamSettings
 			} else {
 				sender, err := generated.Outbound[0].SenderSettings.GetInstance()
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream = sender.(*proxyman.SenderConfig).StreamSettings
+				stream = mustType[*proxyman.SenderConfig](t, sender).StreamSettings
 			}
 			if server || ports[0] == 0 || ports[1] <= ports[0] {
 				if len(stream.Udpmasks) != 0 {
@@ -400,7 +411,7 @@ func TestGenerateConfigHysteriaUDPHop(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			hop := mask.(*udphop.Config)
+			hop := mustType[*udphop.Config](t, mask)
 			if !hop.Remote || !hop.Local || hop.RemoteOnce || hop.IntervalMin != 30 || hop.IntervalMax != 30 || len(hop.RemoteIPs) != 0 || len(hop.RemotePorts) != ports[1]-ports[0]+1 {
 				t.Fatalf("unexpected udphop: %v", hop)
 			}
@@ -413,6 +424,7 @@ func TestGenerateConfigHysteriaUDPHop(t *testing.T) {
 	}
 }
 
+// TestGenerateConfigHysteriaTLS 检查 Hysteria 客户端始终带 TLS 配置，SNI 与证书保持不变。
 func TestGenerateConfigHysteriaTLS(t *testing.T) {
 	certPath, _ := createTestCert(t)
 	for _, enabled := range []bool{false, true} {
@@ -442,7 +454,7 @@ func TestGenerateConfigHysteriaTLS(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				stream := sender.(*proxyman.SenderConfig).StreamSettings
+				stream := mustType[*proxyman.SenderConfig](t, sender).StreamSettings
 				// 无论是否指定 tls 选项，Hysteria 客户端都必须带 TLS 配置
 				if len(stream.SecuritySettings) != 1 {
 					t.Fatalf("missing TLS settings (tls option = %v)", enabled)
@@ -451,7 +463,7 @@ func TestGenerateConfigHysteriaTLS(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				securityConfig := security.(*tls.Config)
+				securityConfig := mustType[*tls.Config](t, security)
 				if securityConfig.ServerName != host || stream.SecurityType != stream.SecuritySettings[0].Type {
 					t.Fatalf("unexpected TLS: %v", securityConfig)
 				}
